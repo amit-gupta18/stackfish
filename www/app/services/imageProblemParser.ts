@@ -10,6 +10,8 @@ type ParsedProblem = {
   confidence: number;
 };
 
+type VisionParseModel = 'claude' | 'gemini3' | 'gpt-4o' | 'gpt-4o-mini';
+
 const IMAGE_PARSE_INSTRUCTIONS = `Extract a competitive programming problem from this image.
 Return strict JSON with these keys only:
 {
@@ -54,7 +56,7 @@ function sanitizeProblemSlug(value: string): string {
   return slug ? `uploaded-${slug}-${randomUUID().slice(0, 6)}` : fallback;
 }
 
-function resolveVisionModel(model: Model): Model {
+function resolveVisionModel(model: Model): VisionParseModel {
   if (model === 'claude' || model === 'gemini3' || model === 'gpt-4o' || model === 'gpt-4o-mini') {
     return model;
   }
