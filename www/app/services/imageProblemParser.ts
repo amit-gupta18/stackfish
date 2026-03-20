@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import { parseJson } from './parse_utils';
 import { Model } from '../types/models';
+import llm from './llm';
 
 type ParsedProblem = {
   title: string;
@@ -28,12 +29,43 @@ Rules:
 - If some text is unclear, make the best effort and lower confidence.
 - Do not wrap the JSON in markdown fences.`;
 
+const TEXT_PARSE_INSTRUCTIONS = `Extract a competitive programming problem from the pasted text below.
+Return strict JSON with these keys only:
+{
+  "title": "short problem title",
+  "statement": "full statement text",
+  "sample_input": "sample input exactly as shown",
+  "sample_output": "sample output exactly as shown",
+  "confidence": 0.0
+}
+
+Rules:
+- Preserve line breaks in statement, sample_input, and sample_output.
+- The statement should contain the full problem description, not just a summary.
+- If the title is missing, infer a short one.
+- If sample input or output cannot be found, return an empty string for that field.
+- Do not wrap the JSON in markdown fences.
+
+Problem text:
+`;
+
 function getRequiredEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
   return value;
+}
+
+function getGeminiApiKey(): string {
+  return process.env.GOOGLE_GENERATIVE_AI_API_KEY
+    || process.env.GEMINI_API_KEY
+    || process.env.GOOGLE_API_KEY
+    || getRequiredEnv('GOOGLE_GENERATIVE_AI_API_KEY');
+}
+
+function getGeminiModelId(): string {
+  return process.env.GEMINI_MODEL_ID || 'gemini-2.0-flash-lite';
 }
 
 function normalizeParsedProblem(data: Record<string, unknown>): ParsedProblem {
@@ -142,8 +174,8 @@ async function parseWithAnthropic(mimeType: string, base64Image: string): Promis
 }
 
 async function parseWithGemini(mimeType: string, base64Image: string): Promise<ParsedProblem> {
-  const apiKey = getRequiredEnv('GOOGLE_GENERATIVE_AI_API_KEY');
-  const model = getRequiredEnv('GEMINI_MODEL_ID');
+  const apiKey = getGeminiApiKey();
+  const model = getGeminiModelId();
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
     {
@@ -180,6 +212,48 @@ async function parseWithGemini(mimeType: string, base64Image: string): Promise<P
   const data = await response.json();
   const content = data.candidates?.[0]?.content?.parts?.map((part: { text?: string }) => part.text || '').join('\n') || '{}';
   return normalizeParsedProblem(parseJson(content));
+}
+
+export async function parseProblemFromText(content: string, model: Model): Promise<ParsedProblem & { problemSlug: string; parserModel: Model }> {
+  const parserModel = resolveTextParseModel(model);
+  const response = await llm(`${TEXT_PARSE_INSTRUCTIONS}${content}`, parserModel, true);
+  const parsed = normalizeParsedProblem(parseJson(response));
+
+  if (!parsed.statement || !parsed.sample_input || !parsed.sample_output) {
+    throw new Error('Could not extract statement, sample input, and sample output from the pasted text');
+  }
+
+  return {
+    ...parsed,
+    problemSlug: sanitizeProblemSlug(parsed.title),
+    parserModel,
+  };
+}
+
+function hasEnv(...names: string[]): boolean {
+  return names.some((name) => Boolean(process.env[name]));
+}
+
+function resolveTextParseModel(model: Model): VisionParseModel {
+  if (model === 'gemini3' && hasEnv('GOOGLE_GENERATIVE_AI_API_KEY', 'GEMINI_API_KEY', 'GOOGLE_API_KEY')) {
+    return 'gemini3';
+  }
+  if (model === 'claude' && hasEnv('ANTHROPIC_API_KEY')) {
+    return 'claude';
+  }
+  if ((model === 'gpt-4o' || model === 'gpt-4o-mini') && hasEnv('OPENAI_API_KEY')) {
+    return model;
+  }
+  if (hasEnv('GOOGLE_GENERATIVE_AI_API_KEY', 'GEMINI_API_KEY', 'GOOGLE_API_KEY')) {
+    return 'gemini3';
+  }
+  if (hasEnv('ANTHROPIC_API_KEY')) {
+    return 'claude';
+  }
+  if (hasEnv('OPENAI_API_KEY')) {
+    return 'gpt-4o-mini';
+  }
+  throw new Error('No parser model is configured. Set a Gemini, Claude, or OpenAI API key.');
 }
 
 export async function parseProblemFromImage(file: File, model: Model): Promise<ParsedProblem & { problemSlug: string; parserModel: Model }> {

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ProblemService, type Log } from '@/app/services/problemService';
 import { Model } from '@/app/types/models';
+import { ProblemSummary } from '@/app/types/problems';
 
 // New component to handle recursive log rendering
 function LogItem({ log }: { log: Log }) {
@@ -44,12 +45,12 @@ function RequestStats({ llmCount, computeCount }: { llmCount: number; computeCou
 }
 
 export default function ProblemColumn({
-  name,
+  problem,
   model,
   autoStart = false,
   onAutoStartHandled,
 }: {
-  name: string;
+  problem: ProblemSummary;
   model: Model;
   autoStart?: boolean;
   onAutoStartHandled?: () => void;
@@ -58,6 +59,8 @@ export default function ProblemColumn({
   const [activeLLMRequests, setActiveLLMRequests] = useState(0);
   const [activeComputeRequests, setActiveComputeRequests] = useState(0);
   const autoStartTriggeredRef = useRef(false);
+  const intakeLogInjectedRef = useRef(false);
+  const name = problem.name;
 
   useEffect(() => {
     const handleRequestCount = (problem: string, llm_count: number, compute_count: number) => {
@@ -71,6 +74,43 @@ export default function ProblemColumn({
       ProblemService.removeListener(handleRequestCount);
     };
   }, [name]);
+
+  useEffect(() => {
+    if (intakeLogInjectedRef.current || (problem.source !== 'image' && problem.source !== 'text')) {
+      return;
+    }
+
+    intakeLogInjectedRef.current = true;
+    const parseLog: Log = {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      depth: 0,
+      message: problem.source === 'image' ? '📸 Question image parsed and saved' : '📝 Text question saved and ready',
+      status: 'done',
+      sub_tasks: [
+        {
+          id: Date.now() + Math.floor(Math.random() * 1000) + 1,
+          depth: 1,
+          message: `Title: ${problem.title}`,
+          status: 'done',
+        },
+        {
+          id: Date.now() + Math.floor(Math.random() * 1000) + 2,
+          depth: 1,
+          message: `Source: ${problem.source}${problem.parser_model ? ` via ${problem.parser_model}` : ''}`,
+          status: 'done',
+        },
+        ...(problem.confidence !== undefined
+          ? [{
+              id: Date.now() + Math.floor(Math.random() * 1000) + 3,
+              depth: 1,
+              message: `Parse confidence: ${Math.round(problem.confidence * 100)}%`,
+              status: 'done' as const,
+            }]
+          : []),
+      ],
+    };
+    setLogs((prev) => [parseLog, ...prev]);
+  }, [problem]);
 
   const handleStart = async () => {
     try {
@@ -124,7 +164,8 @@ export default function ProblemColumn({
     <div className="flex-shrink-0 w-[400px] border border-gray-700 rounded-lg p-2 flex flex-col h-full">
       <div className="flex justify-between items-start mb-4">
         <div className="flex flex-col">
-          <h2 className="text-base font-semibold">{name}</h2>
+          <h2 className="text-base font-semibold">{problem.title}</h2>
+          <span className="text-xs text-gray-500 mt-0.5">{name}</span>
           <span className="text-xs text-gray-400 mt-0.5">Using {model}</span>
           <div className="mt-1">
             <RequestStats llmCount={activeLLMRequests} computeCount={activeComputeRequests} />
@@ -137,6 +178,24 @@ export default function ProblemColumn({
           Let's go!
         </button>
       </div>
+      {(problem.image_url || problem.source !== 'disk') && (
+        <div className="mb-4 rounded-lg border border-gray-800 p-2 space-y-2">
+          {problem.image_url && (
+            <img
+              src={problem.image_url}
+              alt={problem.title}
+              className="w-full max-h-44 object-cover rounded border border-gray-800"
+            />
+          )}
+          <div className="text-xs text-gray-300 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="uppercase tracking-wide text-gray-500">Intake</span>
+              <span className="text-gray-400">{problem.source}</span>
+            </div>
+            <pre className="whitespace-pre-wrap max-h-24 overflow-y-auto">{problem.statement_preview}</pre>
+          </div>
+        </div>
+      )}
       <div className="flex-1 flex flex-col min-h-0">
         <div className="flex-1 overflow-y-auto">
           {logs.length === 0 ? (

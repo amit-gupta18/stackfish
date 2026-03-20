@@ -1,0 +1,412 @@
+
+------------ 2026-03-20T22:36:01.543Z; TITLE: Attack Vector Prompt ----------
+
+
+user: Please solve the following advanced Codeforce-style competetive programming problem.
+
+<PROBLEM_STATEMENT>
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Example 2:
+
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+Example 3:
+
+Input: nums = [3,3], target = 6
+Output: [0,1]
+ 
+
+Constraints:
+
+2 <= nums.length <= 104
+-109 <= nums[i] <= 109
+-109 <= target <= 109
+Only one valid answer exists.
+</PROBLEM_STATEMENT>
+
+<SAMPLE_INPUT>
+nums = [2,7,11,15], target = 9
+</SAMPLE_INPUT>
+
+<SAMPLE_OUTPUT>
+[0,1]
+</SAMPLE_OUTPUT>
+
+<CONSTRAINTS>
+Time limit: 200 seconds
+Memory limit: 8000 MB
+</CONSTRAINTS>
+
+At this point I don't need the code, just editorial-style verbal description of the solution.
+The student Anton will write the code based on your solution.
+Anton is pretty decent competitive programmer, and is familiar with the following algorithms, data structures and techniques, so feel free to refer to them:
+
+<ANTON_KNOWLEDGE>
+combinatorics/next_radix - 
+combinatorics/permutation_hash - Permutation Hash
+combinatorics/permutation_index - Permutation Index (index_perm computes the lexicographical index of the permutation x of [0,n))
+combinatorics/permutation_index_general - Lexicographical index of a general permutation
+data_structure/KDtree - A straightforward, KD-tree implmentation that's probably good enough for most things (current it's a 2D-tree)
+data_structure/LCA - if used, also include RMQ.cpp
+data_structure/LCA_RMQ - L[i] = level
+data_structure/RMQ - data_structure/RMQ.cpp
+data_structure/RangeSet - RangeSet - for maintaining set of segments {{{
+data_structure/SegTree - SegTree, copied from AtCoder library {{{
+data_structure/SegTree2D - 2D segment tree
+data_structure/SegmentTree - data_structure/SegmentTree.h
+data_structure/SubMatrix - data_structure/SubMatrix.h
+data_structure/Treap - data_structure/Treap.h
+data_structure/TreeMoAlgorithm - NOTE:
+data_structure/UnionFind - data_structure/UnionFind.h
+data_structure/UnionFindRollback - data_structure/UnionFindRollback.h
+data_structure/binary_heap_indexed - data_structure/binary_heap_indexed.cpp
+data_structure/binary_trie - Binary Trie
+data_structure/cartesian_tree - Cartesian Tree
+data_structure/centroid_decomposition - data_structure/centroid_decomposition.cpp
+data_structure/disjoint_sets - data_structure/disjoint_sets.cpp
+data_structure/disjoint_sets_ranked - data_structure/disjoint_sets_ranked.cpp
+data_structure/disjoint_sparse_table - Disjoint Sparse Table
+data_structure/dsu - Disjoint Set Union
+data_structure/fenwick - Fenwick tree
+data_structure/fenwick_2d - Efficient implementation of Fenwick 2D
+data_structure/fenwick_tree - data_structure/fenwick_tree.cpp
+data_structure/fenwick_tree_2d - data_structure/fenwick_tree_2d.cpp
+data_structure/fenwick_tree_interval - data_structure/fenwick_tree_interval.cpp
+data_structure/fenwick_tree_on_map - data_structure/fenwick_tree_on_map.cpp
+data_structure/hash_map - data_structure/hash_map.cpp
+data_structure/heavy_light - Tested:
+data_structure/heavy_light_decomposition - data_structure/heavy_light_decomposition.cpp
+data_structure/kd_tree - data_structure/kd_tree.cpp
+data_structure/lazy_segment_tree - Segment tree with ability to add or set values of large intervals, and compute max of intervals.
+data_structure/leftist_heap - Leftist heap is a heap data structure that allows the meld (merge) operation in O(log n) time. Use this for persistent heaps.
+data_structure/li_chao_seg_tree - The Li Chao Segment Tree is a data structure used to maintain a dynamic set of linear functions and efficiently query the minimum or maximum value at a given point.
+data_structure/line_container - Container where you can add lines of the form kx+m, and query maximum values at points x. Useful for dynamic programming (convex hull trick).
+data_structure/link_cut_splay_tree - SplayTree
+data_structure/link_cut_tree - LinkCut tree with path queries. Query complexity is O(log(n)) amortized.
+data_structure/matrix - Basic operations on square matrices.
+data_structure/minmax_heap - Min-Map Heap (four heaps technique). A data structure for push/min/max/popmin/popmax.
+data_structure/mo_algorithm - Mo Algorithm
+data_structure/mo_queries - Answer interval or tree path queries by finding an approximate TSP through the queries, and moving from one query to the next by adding/removing points at the ends.
+data_structure/mos_with_updates - data_structure/mos_with_updates.cpp
+data_structure/ordered_set - set.upd(x, x, +1); set.find_by_order(k);
+data_structure/persistent_array - PersistentArray
+data_structure/persistent_heap - Persistent Heap (based on randomized meldable heap). Meldable heap with O(1) copy.
+data_structure/persistent_seg_tree - Persistent segment tree
+data_structure/queue_min - modified stack and queue that allows us to get the minimum element in O(1)
+data_structure/radix_heap - 
+data_structure/randomized_binary_search_tree - 
+data_structure/segment_tree - data_structure/segment_tree.cpp
+data_structure/segment_tree - data_structure/segment_tree.h
+data_structure/segment_tree_without_recursion - data_structure/segment_tree_without_recursion.cpp
+data_structure/sparse-segment-tree - data_structure/sparse-segment-tree.cpp
+data_structure/sparse-table - data_structure/sparse-table.cpp
+data_structure/sparse_table - 
+data_structure/sqrt_array - SQRT Array - An array with o(n) deletion and insertion
+data_structure/treap - data_structure/treap.cpp
+data_structure/treap_bst - data_structure/treap_bst.cpp
+data_structure/treap_bst_shared_ptr - data_structure/treap_bst_shared_ptr.cpp
+data_structure/treap_indexed - data_structure/treap_indexed.cpp
+data_structure/tree2d - data_structure/tree2d.cpp
+data_structure/wavelet_tree - data_structure/wavelet_tree.cpp
+dynamic_programming/bounded_knapsack - Bounded Knapsack Problem
+dynamic_programming/cnt_distinct_subseq - Returns number of distinct, non-empty subsequences
+dynamic_programming/digit_dp - Digit DP is a framework to solve problems of counting the numbers less than equal to a given number and whose digits satisfy some constraint.
+dynamic_programming/longest_increasing_subsequence - Longest increasing subsequence
+dynamic_programming/longest_zigzag_subsequence - Longest ZigZag Subsequence
+dynamic_programming/minimum_coin_change - Minimum Coin Change problem (Dynamic Programming)
+geometry/RectInRect - Checks if rectangle of sides x,y fits inside one of sides X,Y
+geometry/angle_area_orientation_sort_rotation_perpendicular - basic geometry util functions
+geometry/basic - Basic geometry objects: Point, Line, Segment. Many basic functions on them
+geometry/bk_tree - Burkhard-Keller Tree (metric tree)
+geometry/circle - Circle utils - area, tangents, intersection
+geometry/closest_pair - Find closest pair of points
+geometry/convex_hull - Convex hull of 2D points
+geometry/coordinate_domination - 3D Coordinate-Wise Domination
+geometry/covered_range - Covered Range. Given a set of intervals [l_j, r_j). Find a measure of union of the intervals.
+geometry/kd_tree - Kd-Tree
+geometry/li_chao_tree - geometry/li_chao_tree.cpp
+geometry/n_segment_intersects - Given N segments. Check (and returns the indices) if there are 2 segments intersect.
+geometry/point_in_polygon - check whether point in polygon
+geometry/polygon - Polygon: convex hull, in polygon, convex diameter ..
+geometry/polygon_region - Given polygon with N vertices, and M diagonals. Diagonals does not intersect in internal point. Split polygon into regions.
+geometry/rectangle_union - Area of Union of Rectangles (Bentley)
+geometry/rectilinear_mst - Rectilinear Minimum Spanning Tree
+geometry/simple_polygon_check - Given a polygon a[i]. Check if it is simple (does not self-intersect)
+geometry/smallestEnclosingCircle - Smallest enclosing circle: Given N points. Find the smallest circle enclosing these points.
+geometry/vantage_point_tree - Vantage Point Tree (vp tree)
+geometry/voronoi - Voronoi diagrams: O(N^2*LogN), Convex hull: O(N*LogN)
+graph/BiconnectedComponent - find biconnected components in the graph
+graph/BipartiteMatching - Max Bipartite matching.
+graph/BridgeArticulation - UndirectedDFS, for finding bridges & articulation points
+graph/EulerPath - find euler path
+graph/GeneralMatching - Max matching on general graph
+graph/GomoryHu - Max Flow: Find min cut between every pair of vertices using N max_flow call (instead of N^2)
+graph/HungarianLMH - Usage: init(); for[i,j,cost] addEdge(i, j, cost)
+graph/Hungarian_short - n = |left side|, m = |right side| Returns {total weight, matches (from left)}
+graph/MaxClique - MaxClique
+graph/MaxFlowDinic - max flow
+graph/MaxFlowHLPP - Classic MaxFlow Algorithm
+graph/MaxFlowPR - Max flow: Push relabel in O(V^2 E^0.5) with gap heuristic
+graph/MinCostMaxFlowPR - Min Cost Max Flow PR
+graph/MinCostMaxFlowSPFA - Min Cost Max Flow - SPFA
+graph/MinimumCut - Minimum cut between every pair of vertices (Stoer Wagner)
+graph/StableMarriage - Matching algorithm. COMPLEXITY: M^2
+graph/StronglyConnected - build DAG of strongly connected components. Returns: adjacency list of DAG
+graph/articulation_points - Block-Cut Tree (Articulation points / Biconnected components)
+graph/betweenness_centrality - Betweenness centrality of undirected unweighted graph (Brandes)
+graph/bfs_using_map - BFS using map, so extra log factor
+graph/bipartite_coloring - Bipartite coloring (color graph with 2 colors)
+graph/bipartite_edge_coloring - returns vector of {vertex, id of edge to vertex}
+graph/bipartite_matching - Ford-Fulkerson' maximum bipartite matching
+graph/bridge - Bridge-Block Tree (Bridge / Two-edge connected component)
+graph/chromatic_number - Exact Algorithm for Chromatic Number
+graph/cycle_enumeration - Hawick and James' cycle enumeration
+graph/dijkstra - Dijkstra
+graph/dominator_tree - Dominator Tree (Lengauer-Tarjan)
+graph/dynamic_reachability_dag - Italiano's dynamic reachability data structure for DAG
+graph/euler_tour_tree - Euler Tour Tree
+graph/eulerian_path_undirected - Undirected Eulerian Path (Hierholzer's algorithm)
+graph/find_triangles - Find all cycles of length 3 (a.k.a. triangles)
+graph/floyd - Floyd algorithm
+graph/ford_bellman - Ford Bellman, O(N*M)
+graph/gabow_edmonds - General Graph Matching (Gabow-Edmonds)
+graph/hamilton_cycle_ore - Hamilton Cycle for graphs with Ore condition
+graph/is_bipartite - Bipartite graph recognition
+graph/is_chordal - Chordal graph recognition
+graph/is_claw_free - Claw-free graph recognition
+graph/is_cograph - Cograph Recognition
+graph/is_graphic - Grahpic sequence recognition
+graph/isomorphism - Graph Isomorphism
+graph/k_shortest_walks - K Shortest Walks (Simplified Eppstein)
+graph/kariv_hakimi - Minimum Diameter Spanning Tree
+graph/kcore - k-Core Decomposition
+graph/kruskal - Minimum Spanning Tree (Kruskal)
+graph/least_common_ancestor_doubling - Least common ancestor by doubling
+graph/least_common_ancestor_heavylight - Least common ancestor by heavy-light decomposition
+graph/least_common_ancestor_sparsetable - Least common ancestor by euler tour + sparse table
+graph/least_common_ancestor_tarjan - Offline least common ancestor
+graph/link_cut_tree - Link Cut Tree (Slator-Tarjan)
+graph/maximal_cliques - Enumerating maximal cliques (Bron and Kerbosch)
+graph/maximum_cut - Maximum Cut (approximation)
+graph/maximum_flow_dinic - Dinic's maximum flow
+graph/maximum_flow_edmonds_karp - Maximum Flow (Edmonds-Karp)
+graph/maximum_flow_ford_fulkerson - Ford-Fulkerson's maximum flow
+graph/maximum_flow_goldberg_tarjan - Maximum Flow (Goldberg-Tarjan, aka. Push-Relabel, Preflow-Push)
+graph/minimum_feedback_arc_set - Minimum Feedback Arc Set
+graph/minimum_mean_cycle - Minimum Mean Cycle (Karp)
+graph/mst - MST. 0-based index
+graph/plane_perfect_matchings - Counting Perfect Matchings in Plane Graph (Fisher, Kasteleyn, and Temperley)
+graph/prufer_code - Prufer Code in Linear Time
+graph/reachability - reachability fast check
+graph/topo_sort - Topographical sort
+graph/tree_centers - find tree centroid
+graph/tree_decomposition - Tree Decomposition
+graph/tree_diameter - Return {length, path}
+graph/tree_isomorphism - Tree Isomorphism
+math/SimplexMethodLP - Parametric Self-Dual Simplex method
+math/bigint - Big Integer:  comparison O(n); addition, subtraction O(n); multiplication O(n^{1.7}): Karatsuba; division O(n^2): Knuth's D
+math/continued_fraction - Continued Fraction
+math/fast_fourier_transform - Fast Fourier Transformation
+math/fast_modulo_transform - Fast Modulo Transform and Fast Convolution in any Modulo
+math/karatsuba_multiplication - Karatsuba multiplication
+math/lattice_below_line - Number of lattice points below a line
+math/linear_recursion - Linear Recurrence Solver
+math/matrix_bool - Boolean matrix
+math/matrix_double - Matrix Computation Algorithms (double)
+math/polynomial_int - Polynomial with integer coefficient (mod M)
+math/quadratic_equation - Solving a quadratic equation ax^2 + bx + c == 0
+math/rational - Rational Type
+math/satisfiability - SAT solver (DPLL method)
+math/satisfiability_hornsat - Horn-SAT
+math/satisfiability_twosat - Two-Sat
+math/zero_one_IP_solver - Zero-One IP Solver (Balas's branch-and-bound 0-1 IP sovler)
+number_theory/carmichael_lambda - Carmichael Lambda (Universal Totient Function)
+number_theory/divisor_sigma - Divisor function
+number_theory/euler_phi - Euler Phi (Totient Function)
+number_theory/mobius_mu - Mobius Mu
+number_theory/primes - Generating primes from 1 to n.
+</ANTON_KNOWLEDGE>
+
+If the solution uses some specific algorithms from the knowledge library, please simply mention the knowledge id just like this (knowledge id: ...).
+
+
+user: Let's begin! Good luck and think out of the box!
+
+<PROBLEM_STATEMENT>
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Example 2:
+
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+Example 3:
+
+Input: nums = [3,3], target = 6
+Output: [0,1]
+ 
+
+Constraints:
+
+2 <= nums.length <= 104
+-109 <= nums[i] <= 109
+-109 <= target <= 109
+Only one valid answer exists.
+</PROBLEM_STATEMENT>
+
+<SAMPLE_INPUT>
+nums = [2,7,11,15], target = 9
+</SAMPLE_INPUT>
+
+<SAMPLE_OUTPUT>
+[0,1]
+</SAMPLE_OUTPUT>
+
+<CONSTRAINTS>
+Time limit: 200 seconds
+Memory limit: 8000 MB
+</CONSTRAINTS>
+
+Please reason deeply how to solve the problem and write concise and clear verbal solution for it in codeforces editorial style.
+Don't write the code, just verbal explanation in a couple of paragraphs. Only proffessional competitive programmers will read your solution, so feel free to refer to advanced algorithms and use jargon/slang.
+Don't forget to include big O notation for the time and space complexity.
+
+------------ 2026-03-20T22:36:01.901Z; TITLE: Synthetic Tests Prompt ----------
+
+
+Look at the given codeforces-style problem statement.
+Your goal is to read the problem and samples, understand the problem well and produce 4 more sample test cases.
+Each test case should be small, because you are going to be able to calculate the solution on the fly.
+Please focus on edge cases, corner cases, but staying within the problem constraints.
+Each test case should start from a line 1, (like T = 1) because it will include only one test case input.
+Each test case output should start with "Case #1: " and only have one Case because the T is 1.
+Each test should have a short explanation of the test and the output, because the goal is essentially help user to understand the problem statement better and all the possible pitfalls.
+Do not duplicate test cases with the sample input/output, but make sure to cover all the edge cases.
+
+<PROBLEM_STATEMENT>
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Example 2:
+
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+Example 3:
+
+Input: nums = [3,3], target = 6
+Output: [0,1]
+ 
+
+Constraints:
+
+2 <= nums.length <= 104
+-109 <= nums[i] <= 109
+-109 <= target <= 109
+Only one valid answer exists.
+</PROBLEM_STATEMENT>
+
+<SAMPLE_INPUT>
+nums = [2,7,11,15], target = 9
+</SAMPLE_INPUT>
+
+<SAMPLE_OUTPUT>
+[0,1]
+</SAMPLE_OUTPUT>
+
+Please directly output JSON with the additional test cases in the following format:
+{
+  "tests": [{"input": "...", "output": "...", "explanation": "..."}, ...]
+}
+Do not output anything else.
+
+------------ 2026-03-20T22:36:02.101Z; TITLE: Is Only One Output Valid Prompt ----------
+
+
+Look at the given codeforces-style problem statement.
+Your goal is to read the problem and examples and determine one simple thing: if for any provided test case input, there only one correct answer, or there more than one correct answer are accepted?
+For example, if the problem is how long is the shortest path in the graph - there is only one correct answer, so the answer is SINGLE. But if the problem is to find SOME shortest path in the graph - there might be multiple shortest paths, so the answer is MULTIPLE.
+
+Output only one word: "SINGLE" if there is only one correct output, or "MULTIPLE" if there more than one valid output is accepted.
+One exception is float numbers, if the solution expects one number with some absolute/relative error allowed, it still should be considered as a single valid solution.
+
+<PROBLEM_STATEMENT>
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Example 2:
+
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+Example 3:
+
+Input: nums = [3,3], target = 6
+Output: [0,1]
+ 
+
+Constraints:
+
+2 <= nums.length <= 104
+-109 <= nums[i] <= 109
+-109 <= target <= 109
+Only one valid answer exists.
+</PROBLEM_STATEMENT>
+
+<SAMPLE_INPUT>
+nums = [2,7,11,15], target = 9
+</SAMPLE_INPUT>
+
+<SAMPLE_OUTPUT>
+[0,1]
+</SAMPLE_OUTPUT>
+
+Please think hard and then directly output one word: "SINGLE" if there is only one correct output for each test case, or "MULTIPLE" if the task validator can accept multiple outputs.

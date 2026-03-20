@@ -1,0 +1,9 @@
+{
+  "source": "text",
+  "selectedModel": "gemini3",
+  "confidence": 1,
+  "createdAt": "2026-03-20T22:37:08.206Z",
+  "title": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+  "originalFilename": "manual-entry",
+  "parserModel": "gemini3"
+}

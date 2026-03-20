@@ -1,0 +1,9 @@
+{
+  "source": "text",
+  "selectedModel": "gpt-4o-mini",
+  "confidence": 1,
+  "createdAt": "2026-03-20T22:36:00.111Z",
+  "title": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+  "originalFilename": "manual-entry",
+  "parserModel": "gpt-4o-mini"
+}

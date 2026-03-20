@@ -4,14 +4,16 @@ import path from 'path';
 import { PROBLEMS_PATH } from '../../config/config';
 import { MODELS, Model } from '../../types/models';
 import { parseProblemFromImage } from '../../services/imageProblemParser';
+import { getProblemSummary } from '../../services/problemData';
 
 type UploadMetadata = {
-  source: 'image';
+  source: 'image' | 'text';
   originalFilename: string;
   parserModel: Model;
   selectedModel: Model;
   confidence: number;
   createdAt: string;
+  title: string;
 };
 
 export async function POST(request: Request) {
@@ -39,6 +41,9 @@ export async function POST(request: Request) {
     fs.writeFileSync(path.join(problemDir, 'statement.txt'), `${parsed.title}\n\n${parsed.statement}`.trim());
     fs.writeFileSync(path.join(problemDir, 'sample_in.txt'), parsed.sample_input);
     fs.writeFileSync(path.join(problemDir, 'sample_out.txt'), parsed.sample_output);
+    const extension = image.name.includes('.') ? (image.name.split('.').pop() || 'png') : 'png';
+    const imageBuffer = Buffer.from(await image.arrayBuffer());
+    fs.writeFileSync(path.join(problemDir, `source_image.${extension}`), imageBuffer);
 
     const metadata: UploadMetadata = {
       source: 'image',
@@ -47,15 +52,14 @@ export async function POST(request: Request) {
       selectedModel: model as Model,
       confidence: parsed.confidence,
       createdAt: new Date().toISOString(),
+      title: parsed.title,
     };
     fs.writeFileSync(path.join(problemDir, 'metadata.json'), JSON.stringify(metadata, null, 2));
 
     return NextResponse.json({
       created: true,
       problem: parsed.problemSlug,
-      title: parsed.title,
-      confidence: parsed.confidence,
-      parser_model: parsed.parserModel,
+      summary: getProblemSummary(parsed.problemSlug),
     });
   } catch (error) {
     console.error('Error uploading problem:', error);

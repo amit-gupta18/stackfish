@@ -33,6 +33,17 @@ function getRequiredEnv(name: string): string {
   return value;
 }
 
+function getGeminiApiKey(): string {
+  return process.env.GOOGLE_GENERATIVE_AI_API_KEY
+    || process.env.GEMINI_API_KEY
+    || process.env.GOOGLE_API_KEY
+    || getRequiredEnv('GOOGLE_GENERATIVE_AI_API_KEY');
+}
+
+function getGeminiModelId(): string {
+  return process.env.GEMINI_MODEL_ID || 'gemini-2.0-flash-lite';
+}
+
 async function callTogether(messages: BasicMessage[], model: Model, isJson: boolean): Promise<string> {
   const client = new Together({ apiKey: getRequiredEnv('TOGETHER_API_KEY') });
 
@@ -116,8 +127,8 @@ async function callAnthropic(messages: BasicMessage[], isJson: boolean): Promise
 }
 
 async function callGemini(messages: BasicMessage[], isJson: boolean): Promise<string> {
-  const apiKey = getRequiredEnv('GOOGLE_GENERATIVE_AI_API_KEY');
-  const model = getRequiredEnv('GEMINI_MODEL_ID');
+  const apiKey = getGeminiApiKey();
+  const model = getGeminiModelId();
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
     {

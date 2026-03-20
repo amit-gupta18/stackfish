@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { PROBLEMS_PATH } from '../../config/config';
+import { getProblemSummary } from '../../services/problemData';
 
 export async function GET() {
   try {
@@ -17,8 +18,8 @@ export async function GET() {
       }
     });
 
-    return NextResponse.json({ 
-      problems: directories,
+    return NextResponse.json({
+      problems: directories.map((problem) => getProblemSummary(problem)),
     });
   } catch (error) {
     console.error('Error in /problems endpoint:', error);
